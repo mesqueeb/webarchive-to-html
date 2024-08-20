@@ -26,10 +26,10 @@ type WebArchive struct {
 }
 
 func (w *WebArchive) From(warc string) (err error) {
-	fd, err := os.Open(warc)
+	f, err := os.Open(warc)
 	if err == nil {
-		defer fd.Close()
-		err = plist.NewDecoder(fd).Decode(w)
+		defer f.Close()
+		err = plist.NewDecoder(f).Decode(w)
 	}
 	return
 }
@@ -51,17 +51,17 @@ func (w *WebArchive) PatchRef(ref string) string {
 	if err != nil {
 		return ref
 	}
-	ru, err := url.Parse(ref)
+	u, err := url.Parse(ref)
 	if err != nil {
 		return ref
 	}
-	if ru.Host == "" {
-		ru.Host = mu.Host
+	if u.Host == "" {
+		u.Host = mu.Host
 	}
-	if ru.Scheme == "" {
-		ru.Scheme = mu.Scheme
+	if u.Scheme == "" {
+		u.Scheme = mu.Scheme
 	}
-	return ru.String()
+	return u.String()
 }
 func (w *WebArchive) FindResource(ref string) (res *Resources, exist bool) {
 	if w.res == nil {
@@ -86,9 +86,9 @@ func (w *WebArchive) ExtractResources(dir string) (map[string]string, error) {
 		case "font/opentype":
 			ext = ".otf"
 		default:
-			exs, _ := mime.ExtensionsByType(r.WebResourceMIMEType)
-			if len(exs) > 0 {
-				ext = exs[0]
+			xs, _ := mime.ExtensionsByType(r.WebResourceMIMEType)
+			if len(xs) > 0 {
+				ext = xs[0]
 			}
 		}
 
